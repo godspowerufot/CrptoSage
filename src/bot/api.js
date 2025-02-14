@@ -59,38 +59,37 @@ async function getTokenData(tokenName) {
 }
 
 const analyzeToken = async (tokenData) => {
+  try {
+    console.log(`🔍 Fetching token data for: ${tokenData} and analyzing...`);
 
-    try {
-        console.log(`🔍 Fetching token data for: ${tokenData} and analyzing .....`);
-
-      const response = await fetch(CHAT_URL, {
-        method: "POST",
+    const response = await axios.post(
+      CHAT_URL,
+      {
+        model: "gpt-4",
+        messages: [
+          { role: "system", content: "You are a crypto market expert." },
+          { role: "user", content: `Analyze the following token data:\n${tokenData}` },
+        ],
+      },
+      {
         headers: {
           "Content-Type": "application/json",
           Authorization: `Bearer ${process.env.OPENAI_API_KEY}`,
         },
-        body: JSON.stringify({
-          model: "gpt-4",
-          messages: [
-            { role: "system", content: "You are a crypto market expert." },
-            { role: "user", content: `Analyze the following token data:\n${tokenData}` },
-          ],
-        }),
-      });
-  
-      const data = await response.json();
-  
-      if (response.ok && data.choices) {
-        return data.choices[0].message.content;
-      } else {
-        console.error("ChatGPT API Error:", data);
-        return "⚠️ Error analyzing token. Try again.";
       }
-    } catch (error) {
-      console.error("❌ ChatGPT Fetch Error:", error);
-      return "⚠️ Unexpected error while analyzing token.";
+    );
+
+    if (response.data && response.data.choices) {
+      return response.data.choices[0].message.content;
+    } else {
+      console.error("🚨 ChatGPT API Error:", response.data);
+      return "⚠️ Error analyzing token. Try again.";
     }
-  };
+  } catch (error) {
+    console.error("❌ ChatGPT API Fetch Error:", error.response?.data || error.message);
+    return "⚠️ Unexpected error while analyzing token.";
+  }
+};
   async function createWallet() {
     const wallet = ethers.Wallet.createRandom();
     return {
@@ -136,32 +135,36 @@ const IMAGE_URL = "https://api.openai.com/v1/images/generations";
 
 
 
+
 const generateNFTImage = async (text) => {
-    try {
-      const response = await fetch('https://api.deepai.org/api/text2img', {
-        method: 'POST',
+  try {
+    const response = await axios.post(
+      'https://api.deepai.org/api/text2img',
+      { text },  // Dynamically use the text parameter
+      {
         headers: {
-          'Content-Type': 'application/json',
-          'api-key': process.env.DEEPAI_API_KEY,  // Store your API key in .env file
+          'api-key': process.env.DEEPAI_API_KEY, // Ensure API key is correctly set
         },
-        body: JSON.stringify({
-          text: 'A   a anime or web cartonn 2d art or ninjs',
-        }),
-      });
-  
-      const data = await response.json();
-  
-      if (data && data.output_url) {
-        return data.output_url;
-      } else {
-        console.error("DeepAI API Error:", data);
-        return "🚨 Error: Failed to generate image with DeepAI. Try again!";
       }
-    } catch (error) {
-      console.error("DeepAI API Fetch Error:", error);
-      return "⚠️ An unexpected error occurred while generating the image.";
+    );
+
+    if (response.data && response.data.output_url) {
+      console.log("✅ Image Generated:", response.data.output_url);
+      return response.data.output_url;
+    } else {
+      console.error("🚨 DeepAI API Error:", response.data);
+      return "🚨 Error: Failed to generate image with DeepAI. Try again!";
     }
-  };
+  } catch (error) {
+    console.error("⚠️ DeepAI API Fetch Error:", error.response?.data || error.message);
+    return "⚠️ An unexpected error occurred while generating the image.";
+  }
+};
+
+// Example usage
+
+// Example usage
+
 
 // API configuration
 
@@ -186,3 +189,8 @@ async function fetchNews() {
 
 
 module.exports = { getTokenData,analyzeToken ,createWallet,generateNFTImage,fetchNews};
+const axios = require('axios');
+
+
+
+// Example usage

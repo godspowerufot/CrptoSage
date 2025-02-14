@@ -6,7 +6,7 @@ const { getTokenData, analyzeToken, fetchNews, createWallet, generateNFTImage } 
 const provider = new ethers.JsonRpcProvider(process.env.SEPOLIA_RPC_URL);
 const contractData = require("../../artifacts/contracts/prediction.sol/CryptoPrediction.json");
 const contractABI = contractData.abi;
-const contractAddress = "0xCB5A2D11192B555c3D84c3880d41BBb286BE16E4";
+const contractAddress = "0x59F233dA411c0d1Cbe1A6CE6C1c3f8eF47e6039C";
 
 const userWallets = {};  // Stores user wallets
 const userState = {}; // Stores user actions (e.g., checking price, analyzing, predicting)
@@ -179,7 +179,7 @@ function handleCommands(bot) {
               }
   
               const currentPriceFormatted = parseUnits(updatedData.price.toString(), 18);
-              const imageURL = await generateNFTImage();
+              const imageURL = await generateNFTImage("A ninja in anime style");
   
               try {
                   const checkTx = await contract.checkPrediction(userWallet.address, currentPriceFormatted, imageURL);
@@ -203,15 +203,24 @@ function handleCommands(bot) {
                             const gasLimit = 300000;
                             const mintTx = await contract.mintNFT(userWallet.address, tokenSymbol, { gasLimit });
                             await mintTx.wait();
-                    
+                    // After minting the NFT
+                    // Step 2: Get the prediction index for a specific token symbol
+              const predictionIndex = await contract.getPredictionIndex(userWallet.address, tokenSymbol);
+
+                          const tokenId = await contract.getTokenId(userWallet.address, predictionIndex);
+
+// Generate OpenSea link
+const openseaLink = `https://testnets.opensea.io/assets/${contractAddress}/${tokenId}`;
+
+
                             ctx.reply(
                                 `✅ NFT Minted Successfully! 🖼️`,
                               
                             );
                             ctx.reply(`https://explorer.creatorchain.io/tx/${mintTx.hash}`,
                                 Markup.inlineKeyboard([
-                                    [Markup.button.url("View NFT", `https://testnets.opensea.io/assets/${contractAddress}/${userWallet.address}`)],
-                                    [Markup.button.url("View Tx Hash", `https://explorer.creatorchain.io/tx/${mintTx.hash}`)]
+                                  [Markup.button.url("View NFT on OpenSea", openseaLink)],
+                                  [Markup.button.url("View Tx Hash", `https://explorer.creatorchain.io/tx/${mintTx.hash}`)]
                                 ]))
                         } catch (error) {
                             console.error("Error minting NFT:", error);
