@@ -163,9 +163,9 @@ function handleCommands(bot) {
           const tx = await contract.makePrediction(tokenSymbol, willRise, priceFormatted);
           await tx.wait();
   
-          ctx.reply(`✅ *Prediction Recorded Successfully!* 🎯\n\n🪙 Token: ${tokenSymbol}\n📈 Prediction: ${willRise ? "UP 🚀" : "DOWN 📉"}  https://explorer.creatorchain.io/tx/${tx.hash}`,
+          ctx.reply(`✅ *Prediction Recorded Successfully!* 🎯\n\n🪙 Token: ${tokenSymbol}\n📈 Prediction: ${willRise ? "UP 🚀" : "DOWN 📉"} https://assam.tea.xyz/tx/${tx.hash}`,
               Markup.inlineKeyboard([
-                  [Markup.button.url("View on Creatorscan", ` https://assam.tea.xyz/tx/ ${tx.hash}`)]
+                  [Markup.button.url("View on assam", `https://assam.tea.xyz/tx/${tx.hash}`)]
               ])
           );
   
@@ -185,7 +185,7 @@ function handleCommands(bot) {
                   const checkTx = await contract.checkPrediction(userWallet.address, currentPriceFormatted, imageURL);
                   await checkTx.wait();
   
-                        const events = await contract.queryFilter("PredictionChecked", -100000, "latest");
+                  const events = await contract.queryFilter("PredictionChecked", -100000, "latest");
                   const userEvents = events.filter((e) => e.args.user.toLowerCase() === userWallet.address.toLowerCase() && e.args.token === tokenSymbol);
                   const latestEvent = userEvents[userEvents.length - 1];
   
@@ -217,10 +217,10 @@ const openseaLink = `https://testnets.opensea.io/assets/${contractAddress}/${tok
                                 `✅ NFT Minted Successfully! 🖼️`,
                               
                             );
-                            ctx.reply(` https://assam.tea.xyz/tx/ ${mintTx.hash}`,
+                            ctx.reply(`https://assam.tea.xyz/tx/${mintTx.hash}`,
                                 Markup.inlineKeyboard([
                                   [Markup.button.url("View NFT on OpenSea", openseaLink)],
-                                  [Markup.button.url("View Tx Hash", ` https://assam.tea.xyz/tx/ ${mintTx.hash}`)]
+                                  [Markup.button.url("View Tx Hash", `https://assam.tea.xyz/tx/${mintTx.hash}`)]
                                 ]))
                         } catch (error) {
                             console.error("Error minting NFT:", error);
