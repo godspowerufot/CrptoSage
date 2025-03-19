@@ -4,7 +4,7 @@ const { Markup } = require("telegraf");
 const { getTokenData, analyzeToken, fetchNews, createWallet, generateNFTImage } = require("./api");
 
 const provider = new ethers.JsonRpcProvider(process.env.SEPOLIA_RPC_URL);
-const contractData = require("../../artifacts/contracts/prediction.sol/CryptoPrediction.json");
+const contractData = require("../artifacts/contracts/prediction.sol/CryptoPrediction.json");
 const contractABI = contractData.abi;
 const contractAddress = "0x263E7330B836d3311679191174f182500deE2880";
 
