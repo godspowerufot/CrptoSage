@@ -169,7 +169,7 @@ function handleCommands(bot) {
               ])
           );
   
-          ctx.reply("⏳ Waiting 5 minutes before checking prediction... ⏳");
+          ctx.reply("⏳ Wait 5 minutes before checking prediction... ");
           setTimeout(async () => {
               ctx.reply("⚠️ Checking your prediction now... 🔍");
               const updatedData = await getTokenData(tokenSymbol);
