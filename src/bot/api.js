@@ -189,7 +189,6 @@ async function fetchNews() {
 
 
 module.exports = { getTokenData,analyzeToken ,createWallet,generateNFTImage,fetchNews};
-const axios = require('axios');
 
 
 
